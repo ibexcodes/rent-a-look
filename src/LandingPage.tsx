@@ -58,6 +58,12 @@ const Hero = () => {
             <Link to="/collection" className="px-6 md:px-8 py-3 md:py-4 bg-black text-white rounded-full font-medium flex items-center gap-2 group hover:gap-4 hover:bg-botswana-blue transition-all text-sm md:text-base">
               Explore Collection <ArrowRight size={20} />
             </Link>
+            <button
+              onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
+              className="px-6 md:px-8 py-3 md:py-4 bg-white text-black border-2 border-black rounded-full font-medium flex items-center gap-2 group hover:bg-black hover:text-white transition-all text-sm md:text-base"
+            >
+              How It Works
+            </button>
           </div>
         </motion.div>
 
