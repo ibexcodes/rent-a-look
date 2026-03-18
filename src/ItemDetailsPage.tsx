@@ -157,16 +157,13 @@ const ItemDetailsPage = () => {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4 mb-12">
-                <button 
+                <button
                   onClick={handleAddToCart}
                   disabled={item.stock <= 0}
                   className="flex-1 px-10 py-5 bg-black text-white rounded-full font-bold text-lg flex items-center justify-center gap-3 hover:bg-botswana-blue transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
                 >
                   <ShoppingBag size={20} className="group-hover:scale-110 transition-transform" />
                   {item.stock <= 0 ? 'Out of Stock' : 'Add to Cart'}
-                </button>
-                <button className="px-10 py-5 border border-black/10 rounded-full font-bold text-lg hover:bg-botswana-blue/10 transition-all">
-                  Wishlist
                 </button>
               </div>
 

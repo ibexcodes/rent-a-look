@@ -207,9 +207,9 @@ export const Cart = () => {
                           <div className="flex items-center justify-between">
                             <div>
                               <p className="font-bold text-botswana-blue">
-                                P{item.price * item.quantity * ((item.category === 'rental' || item.category === 'shoe') ? rentalDuration : 1)}
+                                P{item.price * item.quantity * ((item.category === 'Shoes' || item.category === 'Wedding Gowns' || item.category === 'Graduation Gowns') ? rentalDuration : 1)}
                               </p>
-                              {(item.category === 'rental' || item.category === 'shoe') && rentalDuration > 1 && (
+                              {(item.category === 'Shoes' || item.category === 'Wedding Gowns' || item.category === 'Graduation Gowns') && rentalDuration > 1 && (
                                 <p className="text-[10px] text-black/40 font-bold uppercase">P{item.price} × {rentalDuration} days</p>
                               )}
                             </div>

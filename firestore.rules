@@ -91,7 +91,7 @@ service cloud.firestore {
     }
 
     function isValidInventoryItem(data) {
-      let validCategories = ["Bundles", "Blazers", "Trousers", "Tops", "T-shirts", "Skirts", "Shoes", "Dresses", "Gowns", "Wedding Gowns", "Graduation Gowns"];
+      let validCategories = ["Combo deals", "Blazers", "Trousers", "Tops", "T-shirt", "Shoes", "Dresses", "Accessories", "Gowns", "Wedding Gowns", "Graduation Gowns"];
       return hasRequiredFields(['name', 'category', 'price', 'stock']) &&
              hasOnlyAllowedFields(['name', 'description', 'category', 'price', 'rentalPrice', 'stock', 'imageUrl', 'size']) &&
              data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&

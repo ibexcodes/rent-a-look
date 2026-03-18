@@ -182,7 +182,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       // Record transactions for each item
       for (const item of cart) {
-        const isRental = item.category === 'rental' || item.category === 'shoe';
+        const isRental = item.category === 'Shoes' || item.category === 'Wedding Gowns' || item.category === 'Graduation Gowns';
         const duration = isRental ? rentalDuration : 1;
         
         const transactionData = {
@@ -230,7 +230,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const cartTotal = cart.reduce((total, item) => {
-    const isRental = item.category === 'rental' || item.category === 'shoe';
+    const isRental = item.category === 'Shoes' || item.category === 'Wedding Gowns' || item.category === 'Graduation Gowns';
     const duration = isRental ? rentalDuration : 1;
     return total + (item.price * item.quantity * duration);
   }, 0);

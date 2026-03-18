@@ -9,7 +9,7 @@ import { useFirebase } from './FirebaseContext';
 import { collection, query, orderBy, addDoc, onSnapshot } from 'firebase/firestore';
 import { db } from './firebase';
 
-const categories = ["All", "Bundles", "Trousers", "Wigs", "Jewellery", "Skirts", "Shoes", "Dresses", "Wedding Gowns", "Graduation Gowns"];
+const categories = ["All", "Combo deals", "Trousers", "Wigs", "Jewellery", "T-shirt", "Shoes", "Dresses", "Accessories", "Wedding Gowns", "Graduation Gowns"];
 const sizes = ["All", "S", "M", "L", "XL"];
 const sizeWeights: Record<string, number> = { "S": 1, "M": 2, "L": 3, "XL": 4 };
 
