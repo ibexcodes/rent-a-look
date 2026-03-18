@@ -55,7 +55,6 @@ export const Navbar = () => {
   let navLinks = [
     { name: 'Services', href: '/services' },
     { name: 'Collection', href: '/collection' },
-    { name: 'How it Works', href: isHomePage ? '#how-it-works' : '/#how-it-works' },
   ];
 
   const isAdmin = profile?.role === 'admin' || isSpecificAdmin;
