@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
-import { Star, GraduationCap, Camera, Briefcase, Scissors, MessageSquare } from 'lucide-react';
+import { Star, GraduationCap, Camera, Briefcase, Heart, Crown } from 'lucide-react';
 import { useFirebase } from './FirebaseContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -20,8 +20,8 @@ const ServicesPage = () => {
     { name: "Graduation outfits", icon: <GraduationCap className="w-8 h-8" />, desc: "Complete packages to make your graduation day memorable and stress-free." },
     { name: "Photoshoot outfits", icon: <Camera className="w-8 h-8" />, desc: "Curated looks perfect for professional, creative, and graduation photoshoots." },
     { name: "Internship interview packages", icon: <Briefcase className="w-8 h-8" />, desc: "Professional attire that helps you make the best first impression." },
-    { name: "Makeup services", icon: <Scissors className="w-8 h-8" />, desc: "Professional makeup application for your special events and photoshoots." },
-    { name: "Styling advice", icon: <MessageSquare className="w-8 h-8" />, desc: "One-on-one consultations to help you find your perfect look for any occasion." }
+    { name: "Wedding outfits", icon: <Heart className="w-8 h-8" />, desc: "Elegant wedding attire and accessories for your special day." },
+    { name: "Wigs", icon: <Crown className="w-8 h-8" />, desc: "High-quality wigs for styling, events, and personal transformation." }
   ];
 
   return (

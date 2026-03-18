@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   ShoppingBag, 
@@ -35,7 +35,11 @@ const IMAGE_ASSETS = {
 
 // --- Components ---
 
-const Hero = () => {
+const Hero = ({ howItWorksRef }: { howItWorksRef: React.RefObject<HTMLElement> }) => {
+  const scrollToHowItWorks = () => {
+    howItWorksRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <section className="relative pt-24 md:pt-32 pb-16 md:pb-20 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 lg:gap-12 items-center">
@@ -59,7 +63,7 @@ const Hero = () => {
               Explore Collection <ArrowRight size={20} />
             </Link>
             <button
-              onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={scrollToHowItWorks}
               className="px-6 md:px-8 py-3 md:py-4 bg-white text-black border-2 border-black rounded-full font-medium flex items-center gap-2 group hover:bg-black hover:text-white transition-all text-sm md:text-base"
             >
               How It Works
@@ -104,7 +108,7 @@ const Hero = () => {
   );
 };
 
-const HowItWorks = () => {
+const HowItWorks = React.forwardRef<HTMLElement>((props, ref) => {
   const steps = [
     { title: "Browse", desc: "Check our online catalog or visit our fashion pop-up.", icon: <ShoppingBag size={24} /> },
     { title: "Pick & Fit", desc: "Try it on! We offer fitting sessions every Tuesday.", icon: <Star size={24} /> },
@@ -113,7 +117,7 @@ const HowItWorks = () => {
   ];
 
   return (
-    <section id="how-it-works" className="py-24 bg-black text-white overflow-hidden">
+    <section ref={ref} id="how-it-works" className="py-24 bg-black text-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <div>
@@ -145,7 +149,7 @@ const HowItWorks = () => {
       </div>
     </section>
   );
-};
+});
 
 const Inventory = () => {
   const [items, setItems] = useState<any[]>([]);
@@ -247,6 +251,7 @@ const Inventory = () => {
 export default function LandingPage() {
   const { user, loading } = useFirebase();
   const navigate = useNavigate();
+  const howItWorksRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     if (!loading && user?.email === "johansonsebudi@gmail.com") {
@@ -258,9 +263,9 @@ export default function LandingPage() {
     <div className="min-h-screen font-sans">
       <Navbar />
       <main>
-        <Hero />
+        <Hero howItWorksRef={howItWorksRef} />
         <Inventory />
-        <HowItWorks />
+        <HowItWorks ref={howItWorksRef} />
       </main>
       <Footer />
     </div>
