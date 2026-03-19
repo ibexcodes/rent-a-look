@@ -177,7 +177,7 @@ const Inventory = () => {
       { name: "Black Midi Dress", category: "Dresses", price: 50, stock: 25, size: "M", imageUrl: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&q=80" },
       { name: "Formal Shoes", category: "Shoes", price: 25, size: "L", stock: 15, imageUrl: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=800&q=80" },
       { name: "Tailored Trouser", category: "Trousers", price: 60, size: "M", stock: 12, imageUrl: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=800&q=80" },
-      { name: "Basic T-shirt", category: "T-shirts", price: 20, size: "L", stock: 25, imageUrl: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&q=80" },
+      { name: "Basic T-shirt", category: "Shirts", price: 20, size: "L", stock: 25, imageUrl: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&q=80" },
       { name: "Premium Wedding Gown", category: "Wedding Gowns", price: 500, size: "M", stock: 3, imageUrl: "https://images.unsplash.com/photo-1594552072238-18546115fb57?w=800&q=80" }
     ];
 

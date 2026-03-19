@@ -130,7 +130,7 @@ export default function AdminDashboard({ onBack }: AdminDashboardProps) {
       { name: "Formal Shoes", category: "Shoes", price: 25, size: "L", stock: 15, imageUrl: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=800&q=80" },
       { name: "Elegant Dress", category: "Dresses", price: 30, size: "S", stock: 8, imageUrl: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&q=80" },
       { name: "Tailored Trouser", category: "Trousers", price: 60, size: "M", stock: 12, imageUrl: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=800&q=80" },
-      { name: "Basic T-shirt", category: "T-shirts", price: 20, size: "L", stock: 25, imageUrl: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&q=80" },
+      { name: "Basic T-shirt", category: "Shirts", price: 20, size: "L", stock: 25, imageUrl: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&q=80" },
       { name: "Full Outfit Package", category: "Bundles", price: 125, size: "All", stock: 5, imageUrl: "https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?w=800&q=80" },
       { name: "Premium Wedding Gown", category: "Wedding Gowns", price: 500, size: "M", stock: 3, imageUrl: "https://images.unsplash.com/photo-1594552072238-18546115fb57?w=800&q=80" },
       { name: "Graduation Gown", category: "Graduation Gowns", price: 70, size: "L", stock: 20, imageUrl: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&q=80" },
@@ -138,7 +138,7 @@ export default function AdminDashboard({ onBack }: AdminDashboardProps) {
       { name: "Leather Loafers", category: "Shoes", price: 35, size: "M", stock: 10, imageUrl: "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=800&q=80" },
       { name: "Summer Floral Dress", category: "Dresses", price: 35, size: "M", stock: 12, imageUrl: "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=800&q=80" },
       { name: "Slim Fit Chinos", category: "Trousers", price: 50, size: "S", stock: 15, imageUrl: "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=800&q=80" },
-      { name: "Graphic Print T-shirt", category: "T-shirts", price: 25, size: "M", stock: 20, imageUrl: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800&q=80" },
+      { name: "Graphic Print T-shirt", category: "Shirts", price: 25, size: "M", stock: 20, imageUrl: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800&q=80" },
       { name: "Business Casual Bundle", category: "Bundles", price: 110, size: "All", stock: 6, imageUrl: "https://images.unsplash.com/photo-1617137968427-85924c800a22?w=800&q=80" },
       { name: "Lace Wedding Gown", category: "Wedding Gowns", price: 600, size: "S", stock: 2, imageUrl: "https://images.unsplash.com/photo-1566737236500-c8ac43014a67?w=800&q=80" },
       { name: "Master's Graduation Gown", category: "Graduation Gowns", price: 85, size: "XL", stock: 15, imageUrl: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&q=80" }
