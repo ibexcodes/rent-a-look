@@ -121,12 +121,9 @@ const ItemDetailsPage = () => {
                 <h1 className="text-5xl md:text-6xl font-display font-bold uppercase tracking-tighter mb-4 leading-none">
                   {item.name}
                 </h1>
-                <div className="flex items-baseline gap-2 mb-8">
-                  <span className="text-xs font-bold uppercase tracking-widest text-black/40">Rental Price</span>
-                  <p className="text-4xl font-display font-bold text-botswana-blue">
-                    P{item.price || 0}
-                  </p>
-                </div>
+                <p className="text-3xl font-display font-bold text-botswana-blue">
+                  P{item.price || 0}
+                </p>
               </div>
 
               <div className="space-y-8 mb-10">
