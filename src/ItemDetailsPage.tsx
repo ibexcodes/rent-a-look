@@ -122,7 +122,7 @@ const ItemDetailsPage = () => {
                   {item.name}
                 </h1>
                 <p className="text-3xl font-display font-bold text-botswana-blue">
-                  P{item.price}
+                  P{item.price || 0}
                 </p>
               </div>
 
