@@ -45,7 +45,6 @@ export default function AdminDashboard({ onBack }: AdminDashboardProps) {
     name: '',
     category: '',
     price: 0,
-    rentalDays: 1,
     size: 'M',
     stock: 0,
     imageUrl: ''
@@ -164,7 +163,7 @@ export default function AdminDashboard({ onBack }: AdminDashboardProps) {
         await addDoc(collection(db, 'inventory'), newItem);
       }
       setShowAddModal(false);
-      setNewItem({ name: '', category: categories.length > 0 ? categories[0] : '', price: 0, rentalDays: 1, size: 'M', stock: 0, imageUrl: '' });
+      setNewItem({ name: '', category: categories.length > 0 ? categories[0] : '', price: 0, size: 'M', stock: 0, imageUrl: '' });
     } catch (error) {
       console.error("Error saving item:", error);
     }
@@ -176,7 +175,6 @@ export default function AdminDashboard({ onBack }: AdminDashboardProps) {
       name: item.name,
       category: item.category,
       price: item.price,
-      rentalDays: item.rentalDays || 1,
       size: item.size,
       stock: item.stock,
       imageUrl: item.imageUrl
@@ -592,20 +590,15 @@ export default function AdminDashboard({ onBack }: AdminDashboardProps) {
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-black/40 mb-1">Rental Days</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-black/40 mb-1">Stock</label>
                     <input 
                       required
                       type="number" 
-                      min="1"
-                      value={newItem.rentalDays}
-                      onChange={e => setNewItem({...newItem, rentalDays: Math.max(1, Number(e.target.value))})}
+                      value={newItem.stock}
+                      onChange={e => setNewItem({...newItem, stock: Number(e.target.value)})}
                       className="w-full px-4 py-3 bg-black/5 rounded-xl outline-none focus:ring-2 focus:ring-botswana-blue/50"
                     />
                   </div>
-                </div>
-                <div className="bg-botswana-blue/5 rounded-xl p-4 border border-botswana-blue/10">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-black/40 mb-1">Total Price</p>
-                  <p className="text-2xl font-bold text-botswana-blue">P{(newItem.price * newItem.rentalDays).toFixed(2)}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
