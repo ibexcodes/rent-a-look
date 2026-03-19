@@ -238,16 +238,7 @@ const CollectionPage = () => {
                       </div>
                     </div>
                     <div className="flex justify-between items-start gap-4">
-                      <div>
-                        <h3 className="font-bold text-lg leading-tight mb-1">{item.name}</h3>
-                        <p className="text-black/60 text-sm mb-1">Size: {item.size || 'N/A'}</p>
-                        <p className="text-botswana-blue font-bold">
-                          P{item.price}
-                          {(item.category === 'Rental' || item.category === 'Shoes' || item.category === 'Wedding Gowns' || item.category === 'Graduation Gowns') && (
-                            <span className="text-[10px] ml-1 opacity-60 uppercase">/ day</span>
-                          )}
-                        </p>
-                      </div>
+                  
                       <button 
                         onClick={() => handleAddToCart(item)}
                         disabled={item.stock <= 0}
