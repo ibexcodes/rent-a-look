@@ -30,20 +30,20 @@ interface AdminDashboardProps {
 }
 
 const COLORS = ['#00A3E0', '#000000', '#F27D26', '#8E9299'];
+const VALID_CATEGORIES = ['Combo deals', 'Blazers', 'Trousers', 'Tops', 'Shirts', 'Shoes', 'Dresses', 'Accessories', 'Gowns', 'Wedding Gowns', 'Graduation Gowns'].sort();
 
 export default function AdminDashboard({ onBack }: AdminDashboardProps) {
   const { user, profile, loading: authLoading, logout } = useFirebase();
   const [transactions, setTransactions] = useState<any[]>([]);
   const [inventory, setInventory] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [editingItem, setEditingItem] = useState<any>(null);
   const [newItem, setNewItem] = useState({
     name: '',
-    category: '',
+    category: VALID_CATEGORIES[0],
     price: 0,
     size: 'M',
     stock: 0,
@@ -78,17 +78,6 @@ export default function AdminDashboard({ onBack }: AdminDashboardProps) {
     const unsubInventory = onSnapshot(collection(db, 'inventory'), (snap) => {
       const inventoryData = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setInventory(inventoryData);
-      
-      // Extract unique categories from inventory
-      const uniqueCategories = Array.from(
-        new Set(inventoryData.map((item: any) => item.category).filter(Boolean))
-      ).sort() as string[];
-      setCategories(uniqueCategories);
-      
-      // Set default category to first available category
-      if (newItem.category === '' && uniqueCategories.length > 0) {
-        setNewItem(prev => ({ ...prev, category: uniqueCategories[0] }));
-      }
     });
     const unsubUsers = onSnapshot(collection(db, 'users'), (snap) => {
       setUsers(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
@@ -163,7 +152,7 @@ export default function AdminDashboard({ onBack }: AdminDashboardProps) {
         await addDoc(collection(db, 'inventory'), newItem);
       }
       setShowAddModal(false);
-      setNewItem({ name: '', category: categories.length > 0 ? categories[0] : '', price: 0, size: 'M', stock: 0, imageUrl: '' });
+      setNewItem({ name: '', category: VALID_CATEGORIES[0], price: 0, size: 'M', stock: 0, imageUrl: '' });
     } catch (error) {
       console.error("Error saving item:", error);
     }
@@ -556,13 +545,9 @@ export default function AdminDashboard({ onBack }: AdminDashboardProps) {
                       onChange={e => setNewItem({...newItem, category: e.target.value})}
                       className="w-full px-4 py-3 bg-black/5 rounded-xl outline-none focus:ring-2 focus:ring-botswana-blue/50"
                     >
-                      {categories.length > 0 ? (
-                        categories.map(c => (
-                          <option key={c} value={c}>{c}</option>
-                        ))
-                      ) : (
-                        <option value="">No categories available</option>
-                      )}
+                      {VALID_CATEGORIES.map(c => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
                     </select>
                   </div>
                   <div>
@@ -600,28 +585,16 @@ export default function AdminDashboard({ onBack }: AdminDashboardProps) {
                     />
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-black/40 mb-1">Stock</label>
-                    <input 
-                      required
-                      type="number" 
-                      value={newItem.stock}
-                      onChange={e => setNewItem({...newItem, stock: Number(e.target.value)})}
-                      className="w-full px-4 py-3 bg-black/5 rounded-xl outline-none focus:ring-2 focus:ring-botswana-blue/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-black/40 mb-1">Image URL</label>
-                    <input 
-                      required
-                      type="url" 
-                      value={newItem.imageUrl}
-                      onChange={e => setNewItem({...newItem, imageUrl: e.target.value})}
-                      className="w-full px-4 py-3 bg-black/5 rounded-xl outline-none focus:ring-2 focus:ring-botswana-blue/50"
-                      placeholder="https://images.unsplash.com/..."
-                    />
-                  </div>
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-black/40 mb-1">Image URL</label>
+                  <input 
+                    required
+                    type="url" 
+                    value={newItem.imageUrl}
+                    onChange={e => setNewItem({...newItem, imageUrl: e.target.value})}
+                    className="w-full px-4 py-3 bg-black/5 rounded-xl outline-none focus:ring-2 focus:ring-botswana-blue/50"
+                    placeholder="https://images.unsplash.com/..."
+                  />
                 </div>
                 <button 
                   type="submit"
