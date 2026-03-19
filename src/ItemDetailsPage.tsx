@@ -123,9 +123,6 @@ const ItemDetailsPage = () => {
                 </h1>
                 <p className="text-3xl font-display font-bold text-botswana-blue">
                   P{item.price}
-                  {(item.category === 'rental' || item.category === 'shoe') && (
-                    <span className="text-sm font-sans font-bold text-black/40 ml-2 uppercase tracking-widest">/ Day</span>
-                  )}
                 </p>
               </div>
 
