@@ -237,8 +237,11 @@ const CollectionPage = () => {
                         {item.category}
                       </div>
                     </div>
-                    <div className="flex justify-between items-start gap-4">
-                  
+                    <div className="flex justify-between items-start gap-4 w-full">
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-black mb-2">{item.name}</h3>
+                        <p className="text-lg font-bold text-botswana-blue">${item.price}</p>
+                      </div>
                       <button 
                         onClick={() => handleAddToCart(item)}
                         disabled={item.stock <= 0}
