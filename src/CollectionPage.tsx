@@ -71,12 +71,33 @@ const CollectionPage = () => {
     setCurrentPage(1);
   }, [activeCategory, activeSize, sortOrder, searchQuery]);
 
+  const getItemPrice = (item: any) => {
+    const rawPrice = item?.price ?? item?.rentalPrice ?? item?.amount ?? item?.cost ?? 0;
+
+    if (typeof rawPrice === 'number') {
+      return Number.isFinite(rawPrice) ? rawPrice : 0;
+    }
+
+    if (typeof rawPrice === 'string') {
+      const parsed = Number(rawPrice.replace(/[^0-9.-]/g, ''));
+      return Number.isFinite(parsed) ? parsed : 0;
+    }
+
+    return 0;
+  };
+
+  const formatPrice = (item: any) => `P${getItemPrice(item).toLocaleString()}`;
+
   const handleAddToCart = async (item: any) => {
     if (!user) {
       navigate('/login');
       return;
     }
-    await addToCart(item);
+
+    await addToCart({
+      ...item,
+      price: getItemPrice(item),
+    });
   };
 
   const filteredAndSortedItems = useMemo(() => {
@@ -99,9 +120,9 @@ const CollectionPage = () => {
     }
 
     if (sortOrder === "price-asc") {
-      items.sort((a, b) => a.price - b.price);
+      items.sort((a, b) => getItemPrice(a) - getItemPrice(b));
     } else if (sortOrder === "price-desc") {
-      items.sort((a, b) => b.price - a.price);
+      items.sort((a, b) => getItemPrice(b) - getItemPrice(a));
     } else if (sortOrder === "size-asc") {
       items.sort((a, b) => (sizeWeights[a.size] || 0) - (sizeWeights[b.size] || 0));
     } else if (sortOrder === "size-desc") {
@@ -240,7 +261,7 @@ const CollectionPage = () => {
                     <div className="flex justify-between items-start gap-4 w-full">
                       <div className="flex-1">
                         <h3 className="font-semibold text-black mb-2">{item.name}</h3>
-                        <p className="text-lg font-bold text-botswana-blue">${item.price}</p>
+                        <p className="text-lg font-bold text-botswana-blue">{formatPrice(item)}</p>
                       </div>
                       <button 
                         onClick={() => handleAddToCart(item)}
