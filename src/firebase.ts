@@ -15,6 +15,9 @@ import {
 import { getFirestore, doc, getDoc, setDoc, collection, query, where, onSnapshot, getDocFromServer, FirestoreError } from 'firebase/firestore';
 import firebaseConfig from '../firebase-applet-config.json';
 
+export const ADMIN_EMAIL = 'rentalook@gmail.com';
+export const ADMIN_PASSWORD = 'group2';
+
 // Initialize Firebase SDK
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
@@ -108,25 +111,31 @@ export const getAuthErrorMessage = (errorCode: string): string => {
   }
 };
 
+const getUserRole = (email: string | null | undefined): 'admin' | 'user' => {
+  return email === ADMIN_EMAIL ? 'admin' : 'user';
+};
+
+const ensureUserProfile = async (user: FirebaseUser, displayName?: string | null) => {
+  const userRef = doc(db, 'users', user.uid);
+  const userSnap = await getDoc(userRef);
+
+  if (!userSnap.exists()) {
+    await setDoc(userRef, {
+      uid: user.uid,
+      email: user.email,
+      displayName: displayName ?? user.displayName,
+      photoURL: user.photoURL,
+      role: getUserRole(user.email)
+    });
+  }
+};
+
 export const loginWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, googleProvider);
     const user = result.user;
-    
-    // Create/Update user profile in Firestore
-    const userRef = doc(db, 'users', user.uid);
-    const userSnap = await getDoc(userRef);
-    
-    if (!userSnap.exists()) {
-      const isAdmin = user.email === "johansonsebudi@gmail.com";
-      await setDoc(userRef, {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-        role: isAdmin ? 'admin' : 'user'
-      });
-    }
+
+    await ensureUserProfile(user);
     
     return user;
   } catch (error: any) {
@@ -145,16 +154,8 @@ export const signUpWithEmail = async (email: string, pass: string, name: string)
     const user = result.user;
     
     await updateProfile(user, { displayName: name });
-    
-    const userRef = doc(db, 'users', user.uid);
-    const isAdmin = user.email === "johansonsebudi@gmail.com";
-    await setDoc(userRef, {
-      uid: user.uid,
-      email: user.email,
-      displayName: name,
-      photoURL: null,
-      role: isAdmin ? 'admin' : 'user'
-    });
+
+    await ensureUserProfile(user, name);
     
     return user;
   } catch (error: any) {
@@ -167,8 +168,17 @@ export const signUpWithEmail = async (email: string, pass: string, name: string)
 export const loginWithEmail = async (email: string, pass: string) => {
   try {
     const result = await signInWithEmailAndPassword(auth, email, pass);
+    await ensureUserProfile(result.user);
     return result.user;
   } catch (error: any) {
+    if (email === ADMIN_EMAIL && pass === ADMIN_PASSWORD && error.code === 'auth/user-not-found') {
+      const result = await createUserWithEmailAndPassword(auth, email, pass);
+      const user = result.user;
+
+      await ensureUserProfile(user);
+      return user;
+    }
+
     const friendlyMessage = getAuthErrorMessage(error.code);
     console.error('Login error:', error);
     throw new Error(friendlyMessage);
@@ -179,20 +189,8 @@ export const loginWithMicrosoft = async () => {
   try {
     const result = await signInWithPopup(auth, microsoftProvider);
     const user = result.user;
-    
-    const userRef = doc(db, 'users', user.uid);
-    const userSnap = await getDoc(userRef);
-    
-    if (!userSnap.exists()) {
-      const isAdmin = user.email === "johansonsebudi@gmail.com";
-      await setDoc(userRef, {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-        role: isAdmin ? 'admin' : 'user'
-      });
-    }
+
+    await ensureUserProfile(user);
     
     return user;
   } catch (error: any) {

@@ -7,7 +7,7 @@ import { Star, Filter, ArrowUpDown, ShoppingBag, Search } from 'lucide-react';
 import { useCart } from './CartContext';
 import { useFirebase } from './FirebaseContext';
 import { collection, query, orderBy, addDoc, onSnapshot } from 'firebase/firestore';
-import { db } from './firebase';
+import { ADMIN_EMAIL, db } from './firebase';
 
 const categories = ["All", "Combo deals", "Trousers", "Wigs", "Shirts", "Shoes", "Dresses", "Accessories", "Wedding Gowns", "Graduation Gowns"];
 const sizes = ["All", "S", "M", "L", "XL"];
@@ -25,7 +25,7 @@ const CollectionPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!authLoading && user?.email === "johansonsebudi@gmail.com") {
+    if (!authLoading && user?.email === ADMIN_EMAIL) {
       navigate('/admin');
     }
   }, [user, authLoading, navigate]);

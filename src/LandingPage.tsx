@@ -23,7 +23,7 @@ import { Footer } from './components/Footer';
 import { useFirebase } from './FirebaseContext';
 import { useCart } from './CartContext';
 import { collection, onSnapshot, query, orderBy, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from './firebase';
+import { ADMIN_EMAIL, db } from './firebase';
 
 // --- Constants & Config ---
 
@@ -254,7 +254,7 @@ export default function LandingPage() {
   const howItWorksRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    if (!loading && user?.email === "johansonsebudi@gmail.com") {
+    if (!loading && user?.email === ADMIN_EMAIL) {
       navigate('/admin');
     }
   }, [user, loading, navigate]);

@@ -20,7 +20,7 @@ import {
   XCircle as XCircleIcon 
 } from 'lucide-react';
 import { collection, onSnapshot, query, orderBy, limit, addDoc, doc, updateDoc, deleteDoc, increment, getDoc } from 'firebase/firestore';
-import { db } from './firebase';
+import { ADMIN_EMAIL, db } from './firebase';
 import { useFirebase } from './FirebaseContext';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
@@ -51,7 +51,7 @@ export default function AdminDashboard({ onBack }: AdminDashboardProps) {
   });
   const navigate = useNavigate();
 
-  const isSpecificAdmin = user?.email === "johansonsebudi@gmail.com";
+  const isSpecificAdmin = user?.email === ADMIN_EMAIL;
 
   useEffect(() => {
     const isAdmin = profile?.role === 'admin' || isSpecificAdmin;
@@ -70,7 +70,7 @@ export default function AdminDashboard({ onBack }: AdminDashboardProps) {
   };
 
   useEffect(() => {
-    const isAdmin = profile?.role === 'admin' || user?.email === "johansonsebudi@gmail.com";
+    const isAdmin = profile?.role === 'admin' || user?.email === ADMIN_EMAIL;
     if (!user || !isAdmin) return;
     const unsubTransactions = onSnapshot(collection(db, 'transactions'), (snap) => {
       setTransactions(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));

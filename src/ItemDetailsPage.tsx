@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { addDoc, collection, doc, getDoc, getDocs, orderBy, query, serverTimestamp } from 'firebase/firestore';
-import { db } from './firebase';
+import { ADMIN_EMAIL, db } from './firebase';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { useCart } from './CartContext';
@@ -40,7 +40,7 @@ const ItemDetailsPage = () => {
 
   // Redirect specific admin
   useEffect(() => {
-    if (!authLoading && user?.email === "johansonsebudi@gmail.com") {
+    if (!authLoading && user?.email === ADMIN_EMAIL) {
       navigate('/admin');
     }
   }, [user, authLoading, navigate]);

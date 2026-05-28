@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { useFirebase } from './FirebaseContext';
 import { collection, query, orderBy, doc, updateDoc, increment, getDoc, onSnapshot } from 'firebase/firestore';
-import { db } from './firebase';
+import { ADMIN_EMAIL, db } from './firebase';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { Link, useNavigate } from 'react-router-dom';
@@ -23,7 +23,7 @@ export default function ProfilePage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && user?.email === "johansonsebudi@gmail.com") {
+    if (!loading && user?.email === ADMIN_EMAIL) {
       navigate('/admin');
     }
   }, [user, loading, navigate]);

@@ -4,6 +4,7 @@ import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { Star, GraduationCap, Camera, Briefcase, Heart, Crown } from 'lucide-react';
 import { useFirebase } from './FirebaseContext';
+import { ADMIN_EMAIL } from './firebase';
 import { useNavigate } from 'react-router-dom';
 
 const ServicesPage = () => {
@@ -11,7 +12,7 @@ const ServicesPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && user?.email === "johansonsebudi@gmail.com") {
+    if (!loading && user?.email === ADMIN_EMAIL) {
       navigate('/admin');
     }
   }, [user, loading, navigate]);
