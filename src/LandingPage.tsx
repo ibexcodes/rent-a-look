@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   ShoppingBag, 
@@ -23,7 +23,7 @@ import { Footer } from './components/Footer';
 import { useFirebase } from './FirebaseContext';
 import { useCart } from './CartContext';
 import { collection, onSnapshot, query, orderBy, addDoc, serverTimestamp } from 'firebase/firestore';
-import { ADMIN_EMAIL, db } from './firebase';
+import { db } from './firebase';
 
 // --- Constants & Config ---
 
@@ -35,11 +35,7 @@ const IMAGE_ASSETS = {
 
 // --- Components ---
 
-const Hero = ({ howItWorksRef }: { howItWorksRef: React.RefObject<HTMLElement> }) => {
-  const scrollToHowItWorks = () => {
-    howItWorksRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
+const Hero = () => {
   return (
     <section className="relative pt-24 md:pt-32 pb-16 md:pb-20 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 lg:gap-12 items-center">
@@ -62,12 +58,6 @@ const Hero = ({ howItWorksRef }: { howItWorksRef: React.RefObject<HTMLElement> }
             <Link to="/collection" className="px-6 md:px-8 py-3 md:py-4 bg-black text-white rounded-full font-medium flex items-center gap-2 group hover:gap-4 hover:bg-botswana-blue transition-all text-sm md:text-base">
               Explore Collection <ArrowRight size={20} />
             </Link>
-            <button
-              onClick={scrollToHowItWorks}
-              className="px-6 md:px-8 py-3 md:py-4 bg-white text-black border-2 border-black rounded-full font-medium flex items-center gap-2 group hover:bg-black hover:text-white transition-all text-sm md:text-base"
-            >
-              How It Works
-            </button>
           </div>
         </motion.div>
 
@@ -108,7 +98,7 @@ const Hero = ({ howItWorksRef }: { howItWorksRef: React.RefObject<HTMLElement> }
   );
 };
 
-const HowItWorks = React.forwardRef<HTMLElement>((props, ref) => {
+const HowItWorks = () => {
   const steps = [
     { title: "Browse", desc: "Check our online catalog or visit our fashion pop-up.", icon: <ShoppingBag size={24} /> },
     { title: "Pick & Fit", desc: "Try it on! We offer fitting sessions every Tuesday.", icon: <Star size={24} /> },
@@ -117,7 +107,7 @@ const HowItWorks = React.forwardRef<HTMLElement>((props, ref) => {
   ];
 
   return (
-    <section ref={ref} id="how-it-works" className="py-24 bg-black text-white overflow-hidden">
+    <section id="how-it-works" className="py-24 bg-black text-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <div>
@@ -149,7 +139,7 @@ const HowItWorks = React.forwardRef<HTMLElement>((props, ref) => {
       </div>
     </section>
   );
-});
+};
 
 const Inventory = () => {
   const [items, setItems] = useState<any[]>([]);
@@ -177,7 +167,7 @@ const Inventory = () => {
       { name: "Black Midi Dress", category: "Dresses", price: 50, stock: 25, size: "M", imageUrl: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&q=80" },
       { name: "Formal Shoes", category: "Shoes", price: 25, size: "L", stock: 15, imageUrl: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=800&q=80" },
       { name: "Tailored Trouser", category: "Trousers", price: 60, size: "M", stock: 12, imageUrl: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=800&q=80" },
-      { name: "Basic T-shirt", category: "Shirts", price: 20, size: "L", stock: 25, imageUrl: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&q=80" },
+      { name: "Basic T-shirt", category: "T-shirts", price: 20, size: "L", stock: 25, imageUrl: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&q=80" },
       { name: "Premium Wedding Gown", category: "Wedding Gowns", price: 500, size: "M", stock: 3, imageUrl: "https://images.unsplash.com/photo-1594552072238-18546115fb57?w=800&q=80" }
     ];
 
@@ -251,10 +241,9 @@ const Inventory = () => {
 export default function LandingPage() {
   const { user, loading } = useFirebase();
   const navigate = useNavigate();
-  const howItWorksRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    if (!loading && user?.email === ADMIN_EMAIL) {
+    if (!loading && user?.email === "johansonsebudi@gmail.com") {
       navigate('/admin');
     }
   }, [user, loading, navigate]);
@@ -263,9 +252,9 @@ export default function LandingPage() {
     <div className="min-h-screen font-sans">
       <Navbar />
       <main>
-        <Hero howItWorksRef={howItWorksRef} />
+        <Hero />
         <Inventory />
-        <HowItWorks ref={howItWorksRef} />
+        <HowItWorks />
       </main>
       <Footer />
     </div>

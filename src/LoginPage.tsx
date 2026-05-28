@@ -11,7 +11,6 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import { useFirebase } from './FirebaseContext';
-import { ADMIN_EMAIL } from './firebase';
 import { useNavigate, Link } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
@@ -31,7 +30,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (user && profile) {
-      const isAdmin = profile.role === 'admin' || user.email === ADMIN_EMAIL;
+      const isAdmin = profile.role === 'admin' || user.email === "johansonsebudi@gmail.com";
       if (isAdmin) {
         navigate('/admin');
       } else {

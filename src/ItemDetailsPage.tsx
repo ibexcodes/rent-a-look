@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { 
@@ -7,40 +7,26 @@ import {
   Star, 
   ShieldCheck, 
   Clock, 
+  Info,
   CheckCircle2
 } from 'lucide-react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { addDoc, collection, doc, getDoc, getDocs, orderBy, query, serverTimestamp } from 'firebase/firestore';
-import { ADMIN_EMAIL, db } from './firebase';
+import { useQuery } from '@tanstack/react-query';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from './firebase';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { useCart } from './CartContext';
 import { useFirebase } from './FirebaseContext';
 
-interface ItemReview {
-  id: string;
-  userId: string;
-  userName: string;
-  rating: number;
-  comment: string;
-  createdAt?: any;
-}
-
 const ItemDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const { addToCart } = useCart();
-  const { user, profile, loading: authLoading } = useFirebase();
-  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-  const [selectedRating, setSelectedRating] = useState(5);
-  const [reviewText, setReviewText] = useState('');
-  const [reviewError, setReviewError] = useState<string | null>(null);
-  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const { user, loading: authLoading } = useFirebase();
 
   // Redirect specific admin
   useEffect(() => {
-    if (!authLoading && user?.email === ADMIN_EMAIL) {
+    if (!authLoading && user?.email === "johansonsebudi@gmail.com") {
       navigate('/admin');
     }
   }, [user, authLoading, navigate]);
@@ -57,75 +43,6 @@ const ItemDetailsPage = () => {
     enabled: !!id,
   });
 
-  const { data: reviews = [], isLoading: reviewsLoading } = useQuery({
-    queryKey: ['item-reviews', id],
-    queryFn: async () => {
-      if (!id) return [] as ItemReview[];
-
-      const reviewsRef = collection(db, 'inventory', id, 'reviews');
-
-      try {
-        const orderedSnapshot = await getDocs(query(reviewsRef, orderBy('createdAt', 'desc')));
-        return orderedSnapshot.docs.map((reviewDoc) => ({ id: reviewDoc.id, ...reviewDoc.data() } as ItemReview));
-      } catch {
-        const fallbackSnapshot = await getDocs(reviewsRef);
-        return fallbackSnapshot.docs
-          .map((reviewDoc) => ({ id: reviewDoc.id, ...reviewDoc.data() } as ItemReview))
-          .sort((a, b) => {
-            const aSeconds = a?.createdAt?.seconds ?? 0;
-            const bSeconds = b?.createdAt?.seconds ?? 0;
-            return bSeconds - aSeconds;
-          });
-      }
-    },
-    enabled: !!id,
-  });
-
-  const averageRating = useMemo(() => {
-    if (!reviews.length) return 0;
-    const total = reviews.reduce((sum, review) => sum + (Number(review.rating) || 0), 0);
-    return total / reviews.length;
-  }, [reviews]);
-
-  const reviewSummaryText = useMemo(() => {
-    if (reviewsLoading) return 'Loading reviews...';
-    if (!reviews.length) return 'No reviews yet';
-    return `${averageRating.toFixed(1)} (${reviews.length} Review${reviews.length === 1 ? '' : 's'})`;
-  }, [reviews, reviewsLoading, averageRating]);
-
-  const formatReviewDate = (createdAt: any) => {
-    if (!createdAt) return 'Just now';
-
-    if (typeof createdAt.toDate === 'function') {
-      return createdAt.toDate().toLocaleDateString('en-GB', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-      });
-    }
-
-    if (typeof createdAt.seconds === 'number') {
-      return new Date(createdAt.seconds * 1000).toLocaleDateString('en-GB', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-      });
-    }
-
-    return 'Just now';
-  };
-
-  const getInitials = (name: string) => {
-    if (!name) return 'AN';
-
-    return name
-      .split(' ')
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((part) => part[0].toUpperCase())
-      .join('');
-  };
-
   const handleAddToCart = async () => {
     if (!user) {
       navigate('/login');
@@ -133,63 +50,6 @@ const ItemDetailsPage = () => {
     }
     if (item) {
       await addToCart(item);
-    }
-  };
-
-  const handleOpenReviewModal = () => {
-    if (!user) {
-      navigate('/login');
-      return;
-    }
-
-    setReviewError(null);
-    setIsReviewModalOpen(true);
-  };
-
-  const handleSubmitReview = async () => {
-    if (!user || !id) {
-      navigate('/login');
-      return;
-    }
-
-    const trimmedReview = reviewText.trim();
-
-    if (selectedRating < 1 || selectedRating > 5) {
-      setReviewError('Please select a rating from 1 to 5.');
-      return;
-    }
-
-    if (trimmedReview.length < 5) {
-      setReviewError('Please write at least 5 characters.');
-      return;
-    }
-
-    setReviewError(null);
-    setIsSubmittingReview(true);
-
-    try {
-      const reviewAuthor =
-        profile?.displayName ||
-        user.displayName ||
-        (user.email ? user.email.split('@')[0] : 'Anonymous');
-
-      await addDoc(collection(db, 'inventory', id, 'reviews'), {
-        userId: user.uid,
-        userName: reviewAuthor,
-        rating: selectedRating,
-        comment: trimmedReview,
-        createdAt: serverTimestamp(),
-      });
-
-      setReviewText('');
-      setSelectedRating(5);
-      setIsReviewModalOpen(false);
-      await queryClient.invalidateQueries({ queryKey: ['item-reviews', id] });
-    } catch (submissionError) {
-      console.error('Error submitting review:', submissionError);
-      setReviewError('Could not submit your review right now. Please try again.');
-    } finally {
-      setIsSubmittingReview(false);
     }
   };
 
@@ -256,13 +116,16 @@ const ItemDetailsPage = () => {
                   {[1, 2, 3, 4, 5].map((star) => (
                     <Star key={star} size={16} className="text-botswana-blue fill-botswana-blue" />
                   ))}
-                  <span className="text-xs font-bold text-black/40 ml-2 uppercase tracking-widest">{reviewSummaryText}</span>
+                  <span className="text-xs font-bold text-black/40 ml-2 uppercase tracking-widest">4.9 (24 Reviews)</span>
                 </div>
                 <h1 className="text-5xl md:text-6xl font-display font-bold uppercase tracking-tighter mb-4 leading-none">
                   {item.name}
                 </h1>
                 <p className="text-3xl font-display font-bold text-botswana-blue">
-                  P{item.price || 0}
+                  P{item.price}
+                  {(item.category === 'rental' || item.category === 'shoe') && (
+                    <span className="text-sm font-sans font-bold text-black/40 ml-2 uppercase tracking-widest">/ Day</span>
+                  )}
                 </p>
               </div>
 
@@ -294,13 +157,16 @@ const ItemDetailsPage = () => {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4 mb-12">
-                <button
+                <button 
                   onClick={handleAddToCart}
                   disabled={item.stock <= 0}
                   className="flex-1 px-10 py-5 bg-black text-white rounded-full font-bold text-lg flex items-center justify-center gap-3 hover:bg-botswana-blue transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
                 >
                   <ShoppingBag size={20} className="group-hover:scale-110 transition-transform" />
                   {item.stock <= 0 ? 'Out of Stock' : 'Add to Cart'}
+                </button>
+                <button className="px-10 py-5 border border-black/10 rounded-full font-bold text-lg hover:bg-botswana-blue/10 transition-all">
+                  Wishlist
                 </button>
               </div>
 
@@ -332,127 +198,32 @@ const ItemDetailsPage = () => {
           <section className="mt-32">
             <div className="flex items-center justify-between mb-12">
               <h2 className="text-4xl font-display font-bold uppercase tracking-tight">Customer Reviews</h2>
-              <button
-                onClick={handleOpenReviewModal}
-                className="text-sm font-bold text-botswana-blue underline"
-              >
-                Write a Review
-              </button>
+              <button className="text-sm font-bold text-botswana-blue underline">Write a Review</button>
             </div>
-
-            {reviewsLoading ? (
-              <div className="grid md:grid-cols-2 gap-8">
-                {[1, 2].map((loadingCard) => (
-                  <div key={loadingCard} className="h-56 rounded-[2.5rem] bg-black/5 animate-pulse" />
-                ))}
-              </div>
-            ) : reviews.length === 0 ? (
-              <div className="bg-white p-10 rounded-[2.5rem] border border-black/5 shadow-sm text-center">
-                <p className="text-black/50">No reviews yet. Be the first to share your experience.</p>
-              </div>
-            ) : (
-              <div className="grid md:grid-cols-2 gap-8">
-                {reviews.map((review) => (
-                  <div key={review.id} className="bg-white p-8 rounded-[2.5rem] border border-black/5 shadow-sm">
-                    <div className="flex items-center gap-4 mb-6">
-                      <div className="w-12 h-12 rounded-full bg-black/5 flex items-center justify-center font-bold">
-                        {getInitials(review.userName)}
-                      </div>
-                      <div>
-                        <p className="font-bold">{review.userName}</p>
-                        <div className="flex gap-1">
-                          {[1, 2, 3, 4, 5].map((starIndex) => (
-                            <Star
-                              key={starIndex}
-                              size={12}
-                              className={
-                                starIndex <= Number(review.rating || 0)
-                                  ? 'text-botswana-blue fill-botswana-blue'
-                                  : 'text-black/20'
-                              }
-                            />
-                          ))}
-                        </div>
+            
+            <div className="grid md:grid-cols-2 gap-8">
+              {[1, 2].map((i) => (
+                <div key={i} className="bg-white p-8 rounded-[2.5rem] border border-black/5 shadow-sm">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-12 h-12 rounded-full bg-black/5 flex items-center justify-center font-bold">
+                      {i === 1 ? 'KM' : 'OT'}
+                    </div>
+                    <div>
+                      <p className="font-bold">{i === 1 ? 'Kabo M.' : 'Onneile T.'}</p>
+                      <div className="flex gap-1">
+                        {[1, 2, 3, 4, 5].map(s => <Star key={s} size={12} className="text-botswana-blue fill-botswana-blue" />)}
                       </div>
                     </div>
-                    <p className="text-black/60 italic leading-relaxed">"{review.comment}"</p>
-                    <p className="text-[10px] text-black/40 font-bold uppercase tracking-widest mt-4">
-                      {formatReviewDate(review.createdAt)}
-                    </p>
                   </div>
-                ))}
-              </div>
-            )}
+                  <p className="text-black/60 italic leading-relaxed">
+                    "{i === 1 ? 'The quality of the graduation gown was exceptional. It fit perfectly and made my day even more special. Highly recommend RENT-A-LOOK!' : 'Great service and very professional. The internship bundle helped me feel confident for my interview. Will definitely use again.'}"
+                  </p>
+                </div>
+              ))}
+            </div>
           </section>
         </div>
       </main>
-
-      {isReviewModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-[2rem] w-full max-w-xl p-8"
-          >
-            <h3 className="text-2xl font-display font-bold uppercase tracking-tight mb-6">Write a Review</h3>
-
-            <div className="mb-6">
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-black/40 mb-3">Your Rating</p>
-              <div className="flex items-center gap-2">
-                {[1, 2, 3, 4, 5].map((starValue) => (
-                  <button
-                    key={starValue}
-                    type="button"
-                    onClick={() => setSelectedRating(starValue)}
-                    className="p-1"
-                    aria-label={`Rate ${starValue} out of 5`}
-                  >
-                    <Star
-                      size={24}
-                      className={
-                        starValue <= selectedRating
-                          ? 'text-botswana-blue fill-botswana-blue'
-                          : 'text-black/20'
-                      }
-                    />
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="mb-6">
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-black/40 mb-3">Your Review</p>
-              <textarea
-                value={reviewText}
-                onChange={(event) => setReviewText(event.target.value)}
-                placeholder="Share your experience with this item..."
-                rows={5}
-                className="w-full rounded-2xl border border-black/10 px-4 py-3 outline-none focus:ring-2 focus:ring-botswana-blue/30"
-              />
-            </div>
-
-            {reviewError && <p className="text-sm text-red-500 mb-4">{reviewError}</p>}
-
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={() => setIsReviewModalOpen(false)}
-                className="flex-1 py-3 rounded-full font-bold bg-black/5 hover:bg-black/10 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleSubmitReview}
-                disabled={isSubmittingReview}
-                className="flex-1 py-3 rounded-full font-bold bg-black text-white hover:bg-botswana-blue transition-colors disabled:opacity-60"
-              >
-                {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
-              </button>
-            </div>
-          </motion.div>
-        </div>
-      )}
 
       <Footer />
     </div>

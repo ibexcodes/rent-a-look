@@ -20,7 +20,7 @@ import {
   XCircle as XCircleIcon 
 } from 'lucide-react';
 import { collection, onSnapshot, query, orderBy, limit, addDoc, doc, updateDoc, deleteDoc, increment, getDoc } from 'firebase/firestore';
-import { ADMIN_EMAIL, db } from './firebase';
+import { db } from './firebase';
 import { useFirebase } from './FirebaseContext';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
@@ -30,7 +30,6 @@ interface AdminDashboardProps {
 }
 
 const COLORS = ['#00A3E0', '#000000', '#F27D26', '#8E9299'];
-const VALID_CATEGORIES = ['Combo deals', 'Blazers', 'Trousers', 'Tops', 'Shirts', 'Shoes', 'Dresses', 'Accessories', 'Gowns', 'Wedding Gowns', 'Graduation Gowns'].sort();
 
 export default function AdminDashboard({ onBack }: AdminDashboardProps) {
   const { user, profile, loading: authLoading, logout } = useFirebase();
@@ -43,7 +42,7 @@ export default function AdminDashboard({ onBack }: AdminDashboardProps) {
   const [editingItem, setEditingItem] = useState<any>(null);
   const [newItem, setNewItem] = useState({
     name: '',
-    category: VALID_CATEGORIES[0],
+    category: 'Blazers',
     price: 0,
     size: 'M',
     stock: 0,
@@ -51,7 +50,7 @@ export default function AdminDashboard({ onBack }: AdminDashboardProps) {
   });
   const navigate = useNavigate();
 
-  const isSpecificAdmin = user?.email === ADMIN_EMAIL;
+  const isSpecificAdmin = user?.email === "johansonsebudi@gmail.com";
 
   useEffect(() => {
     const isAdmin = profile?.role === 'admin' || isSpecificAdmin;
@@ -70,14 +69,13 @@ export default function AdminDashboard({ onBack }: AdminDashboardProps) {
   };
 
   useEffect(() => {
-    const isAdmin = profile?.role === 'admin' || user?.email === ADMIN_EMAIL;
+    const isAdmin = profile?.role === 'admin' || user?.email === "johansonsebudi@gmail.com";
     if (!user || !isAdmin) return;
     const unsubTransactions = onSnapshot(collection(db, 'transactions'), (snap) => {
       setTransactions(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     });
     const unsubInventory = onSnapshot(collection(db, 'inventory'), (snap) => {
-      const inventoryData = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setInventory(inventoryData);
+      setInventory(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     });
     const unsubUsers = onSnapshot(collection(db, 'users'), (snap) => {
       setUsers(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
@@ -118,7 +116,7 @@ export default function AdminDashboard({ onBack }: AdminDashboardProps) {
       { name: "Formal Shoes", category: "Shoes", price: 25, size: "L", stock: 15, imageUrl: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=800&q=80" },
       { name: "Elegant Dress", category: "Dresses", price: 30, size: "S", stock: 8, imageUrl: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&q=80" },
       { name: "Tailored Trouser", category: "Trousers", price: 60, size: "M", stock: 12, imageUrl: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=800&q=80" },
-      { name: "Basic T-shirt", category: "Shirts", price: 20, size: "L", stock: 25, imageUrl: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&q=80" },
+      { name: "Basic T-shirt", category: "T-shirts", price: 20, size: "L", stock: 25, imageUrl: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&q=80" },
       { name: "Full Outfit Package", category: "Bundles", price: 125, size: "All", stock: 5, imageUrl: "https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?w=800&q=80" },
       { name: "Premium Wedding Gown", category: "Wedding Gowns", price: 500, size: "M", stock: 3, imageUrl: "https://images.unsplash.com/photo-1594552072238-18546115fb57?w=800&q=80" },
       { name: "Graduation Gown", category: "Graduation Gowns", price: 70, size: "L", stock: 20, imageUrl: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&q=80" },
@@ -126,7 +124,7 @@ export default function AdminDashboard({ onBack }: AdminDashboardProps) {
       { name: "Leather Loafers", category: "Shoes", price: 35, size: "M", stock: 10, imageUrl: "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=800&q=80" },
       { name: "Summer Floral Dress", category: "Dresses", price: 35, size: "M", stock: 12, imageUrl: "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=800&q=80" },
       { name: "Slim Fit Chinos", category: "Trousers", price: 50, size: "S", stock: 15, imageUrl: "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=800&q=80" },
-      { name: "Graphic Print T-shirt", category: "Shirts", price: 25, size: "M", stock: 20, imageUrl: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800&q=80" },
+      { name: "Graphic Print T-shirt", category: "T-shirts", price: 25, size: "M", stock: 20, imageUrl: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800&q=80" },
       { name: "Business Casual Bundle", category: "Bundles", price: 110, size: "All", stock: 6, imageUrl: "https://images.unsplash.com/photo-1617137968427-85924c800a22?w=800&q=80" },
       { name: "Lace Wedding Gown", category: "Wedding Gowns", price: 600, size: "S", stock: 2, imageUrl: "https://images.unsplash.com/photo-1566737236500-c8ac43014a67?w=800&q=80" },
       { name: "Master's Graduation Gown", category: "Graduation Gowns", price: 85, size: "XL", stock: 15, imageUrl: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&q=80" }
@@ -152,7 +150,7 @@ export default function AdminDashboard({ onBack }: AdminDashboardProps) {
         await addDoc(collection(db, 'inventory'), newItem);
       }
       setShowAddModal(false);
-      setNewItem({ name: '', category: VALID_CATEGORIES[0], price: 0, size: 'M', stock: 0, imageUrl: '' });
+      setNewItem({ name: '', category: 'Blazers', price: 0, size: 'M', stock: 0, imageUrl: '' });
     } catch (error) {
       console.error("Error saving item:", error);
     }
@@ -545,7 +543,7 @@ export default function AdminDashboard({ onBack }: AdminDashboardProps) {
                       onChange={e => setNewItem({...newItem, category: e.target.value})}
                       className="w-full px-4 py-3 bg-black/5 rounded-xl outline-none focus:ring-2 focus:ring-botswana-blue/50"
                     >
-                      {VALID_CATEGORIES.map(c => (
+                      {['Blazers', 'Shoes', 'Dresses', 'Trousers', 'T-shirts', 'Bundles', 'Wedding Gowns', 'Graduation Gowns'].map(c => (
                         <option key={c} value={c}>{c}</option>
                       ))}
                     </select>

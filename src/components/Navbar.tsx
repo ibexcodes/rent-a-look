@@ -9,7 +9,6 @@ import {
 } from 'lucide-react';
 import { useFirebase } from '../FirebaseContext';
 import { useCart } from '../CartContext';
-import { ADMIN_EMAIL } from '../firebase';
 import { Link, useLocation } from 'react-router-dom';
 
 export const Logo = ({ className = "w-10 h-10" }: { className?: string }) => (
@@ -51,11 +50,12 @@ export const Navbar = () => {
 
   const isHomePage = location.pathname === '/';
 
-  const isSpecificAdmin = user?.email === ADMIN_EMAIL;
+  const isSpecificAdmin = user?.email === "johansonsebudi@gmail.com";
 
   let navLinks = [
     { name: 'Services', href: '/services' },
     { name: 'Collection', href: '/collection' },
+    { name: 'How it Works', href: isHomePage ? '#how-it-works' : '/#how-it-works' },
   ];
 
   const isAdmin = profile?.role === 'admin' || isSpecificAdmin;

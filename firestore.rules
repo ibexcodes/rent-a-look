@@ -91,7 +91,7 @@ service cloud.firestore {
     }
 
     function isValidInventoryItem(data) {
-      let validCategories = ["Combo deals", "Blazers", "Trousers", "Tops", "Shirts", "Shoes", "Dresses", "Accessories", "Gowns", "Wedding Gowns", "Graduation Gowns"];
+      let validCategories = ["Bundles", "Blazers", "Trousers", "Tops", "T-shirts", "Skirts", "Shoes", "Dresses", "Gowns", "Wedding Gowns", "Graduation Gowns"];
       return hasRequiredFields(['name', 'category', 'price', 'stock']) &&
              hasOnlyAllowedFields(['name', 'description', 'category', 'price', 'rentalPrice', 'stock', 'imageUrl', 'size']) &&
              data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
@@ -122,16 +122,6 @@ service cloud.firestore {
              (!('rentalPeriod' in data) || data.rentalPeriod == null || data.rentalPeriod is map);
     }
 
-    function isValidReview(data) {
-      return hasRequiredFields(['userId', 'userName', 'rating', 'comment', 'createdAt']) &&
-             hasOnlyAllowedFields(['userId', 'userName', 'rating', 'comment', 'createdAt']) &&
-             data.userId is string && data.userId.size() > 0 &&
-             data.userName is string && data.userName.size() > 0 && data.userName.size() <= 80 &&
-             data.rating is int && data.rating >= 1 && data.rating <= 5 &&
-             data.comment is string && data.comment.size() >= 5 && data.comment.size() <= 1000 &&
-             data.createdAt is timestamp;
-    }
-
     // ===============================================================
     // Rules
     // ===============================================================
@@ -155,19 +145,6 @@ service cloud.firestore {
       allow create: if isAdmin() && isValidInventoryItem(request.resource.data);
       allow update: if (isAuthenticated() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['stock']) && request.resource.data.stock >= 0) || (isAdmin() && isValidInventoryItem(request.resource.data));
       allow delete: if isAdmin();
-
-      match /reviews/{reviewId} {
-        allow read: if true;
-        allow create: if isAuthenticated() &&
-          isValidReview(request.resource.data) &&
-          request.resource.data.userId == request.auth.uid;
-        allow update: if (isAuthenticated() &&
-          resource.data.userId == request.auth.uid &&
-          isValidReview(request.resource.data) &&
-          request.resource.data.userId == resource.data.userId &&
-          request.resource.data.createdAt == resource.data.createdAt) || isAdmin();
-        allow delete: if isAdmin() || (isAuthenticated() && resource.data.userId == request.auth.uid);
-      }
     }
 
     match /transactions/{transactionId} {

@@ -4,7 +4,6 @@ import { Home, ShoppingBag, Menu, Search, X, LogOut, User as UserIcon } from 'lu
 import { Link, useLocation } from 'react-router-dom';
 import { useCart } from '../CartContext';
 import { useFirebase } from '../FirebaseContext';
-import { ADMIN_EMAIL } from '../firebase';
 
 export const LaunchBar = () => {
   const location = useLocation();
@@ -17,7 +16,7 @@ export const LaunchBar = () => {
     { name: 'Collection', href: '/collection', icon: <Search size={20} /> },
   ];
 
-  const isSpecificAdmin = user?.email === ADMIN_EMAIL;
+  const isSpecificAdmin = user?.email === "johansonsebudi@gmail.com";
 
   return (
     <>
